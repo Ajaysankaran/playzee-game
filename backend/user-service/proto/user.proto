@@ -1,0 +1,18 @@
+syntax = "proto3";
+option go_package = "github.com/playzee/backend/user-service/proto";
+
+service userService {
+    rpc GetUser(userId) returns (User) {}
+}
+
+message userId {
+    string id = 1;
+}
+
+message User {
+    string username = 1;
+    string firstname = 2;
+    string lastname = 3;
+    string email = 4;
+    string loginType = 5;
+}
