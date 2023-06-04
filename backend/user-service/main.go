@@ -1,14 +1,15 @@
 package main
 
 import (
-	"context"
 	"flag"
 	"fmt"
 	"log"
 	"net"
 
-	pb "github.com/playzee/backend/user-service/proto"
+	config "github.com/playzee/backend/user-service/config"
+	handler "github.com/playzee/backend/user-service/handler"
 
+	pb "github.com/playzee/backend/user-service/proto"
 	"google.golang.org/grpc"
 )
 
@@ -16,27 +17,24 @@ var (
 	port = flag.Int("port", 9000, "The server port")
 )
 
-type server struct {
-	pb.UnimplementedUserServiceServer
-}
-
-func (s *server) GetUser(ctx context.Context, in *pb.UserId) (*pb.User, error) {
-	log.Printf("Received: %v", in.Id)
-	return &pb.User{Username: "Test user"}, nil
-}
-
 func main() {
-	fmt.Println("Starting..")
+	fmt.Println("Starting server")
 	flag.Parse()
+
+	// Initialize DB Connection
+	config.InitDatabase()
+
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
+
+	// Register GRPC services
 	s := grpc.NewServer()
-	pb.RegisterUserServiceServer(s, &server{})
-	fmt.Printf("server listening at %v", lis.Addr())
+	pb.RegisterUserServiceServer(s, &handler.UserServer{})
+
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}
-
+	defer config.Cdb_Session.Close()
 }
