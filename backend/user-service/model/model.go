@@ -15,3 +15,10 @@ type LoginType string
 const (
 	USER_PASSWORD LoginType = "USER_PASSWORD"
 )
+
+type LoginInput struct {
+	Username  string
+	Password  string
+	Email     string
+	LoginType string
+}

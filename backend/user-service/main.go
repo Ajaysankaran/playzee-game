@@ -30,7 +30,7 @@ func main() {
 	}
 
 	// Register GRPC services
-	s := grpc.NewServer()
+	s := grpc.NewServer(grpc.UnaryInterceptor(config.AuthInterceptor))
 	pb.RegisterUserServiceServer(s, &handler.UserServer{})
 
 	if err := s.Serve(lis); err != nil {

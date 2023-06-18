@@ -7,6 +7,7 @@ import (
 	"github.com/playzee/backend/user-service/model"
 	pb "github.com/playzee/backend/user-service/proto"
 	service "github.com/playzee/backend/user-service/service"
+	"github.com/playzee/backend/user-service/utils"
 )
 
 type UserServer struct {
@@ -35,7 +36,7 @@ func (s *UserServer) RegisterUser(ctx context.Context, in *pb.UserRegisterInput)
 		Password:  in.Password,
 	}
 
-	userOutput, err := service.AddUser(*userInput)
+	userOutput, err := service.RegisterUser(*userInput)
 
 	if err != nil {
 		return nil, err
@@ -43,9 +44,37 @@ func (s *UserServer) RegisterUser(ctx context.Context, in *pb.UserRegisterInput)
 	return &pb.UserId{Id: userOutput.UserId}, nil
 }
 
-func (s *UserServer) LoginUser(ctx context.Context, in *pb.UserLoginInput) (*pb.LoginResponse, error) {
-	//TO-DO
-	return nil, nil
+func (s *UserServer) UserLogin(ctx context.Context, in *pb.UserLoginInput) (*pb.UserLoginResponse, error) {
+	log.Print("Entering user login")
+	loginInput := model.LoginInput{
+		Username:  in.Username,
+		Password:  in.Password,
+		LoginType: in.LoginType,
+		Email:     in.EmailId,
+	}
+
+	if user, err := service.Login(loginInput); err != nil {
+		return nil, err
+	} else {
+		authToken := utils.GenerateJwtToken(utils.Claims{
+			UserId:    user.UserId,
+			Username:  user.Username,
+			LoginType: string(user.LoginType),
+		})
+
+		loginResponse := &pb.UserLoginResponse{
+			AuthToken:    authToken,
+			RefreshToken: "",
+			User: &pb.User{
+				Username:  user.Username,
+				Firstname: user.Firstname,
+				Lastname:  user.Lastname,
+				Email:     user.Email,
+				LoginType: string(user.LoginType),
+			},
+		}
+		return loginResponse, nil
+	}
 }
 
 func (s *UserServer) UpdateUser(ctx context.Context, in *pb.User) (*pb.User, error) {

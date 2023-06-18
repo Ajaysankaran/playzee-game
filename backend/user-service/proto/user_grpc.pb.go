@@ -33,7 +33,7 @@ type UserServiceClient interface {
 	GetUser(ctx context.Context, in *UserId, opts ...grpc.CallOption) (*User, error)
 	RegisterUser(ctx context.Context, in *UserRegisterInput, opts ...grpc.CallOption) (*UserId, error)
 	EditUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error)
-	UserLogin(ctx context.Context, in *UserLoginInput, opts ...grpc.CallOption) (*LoginResponse, error)
+	UserLogin(ctx context.Context, in *UserLoginInput, opts ...grpc.CallOption) (*UserLoginResponse, error)
 	TestRpc(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*TestMessage, error)
 }
 
@@ -72,8 +72,8 @@ func (c *userServiceClient) EditUser(ctx context.Context, in *User, opts ...grpc
 	return out, nil
 }
 
-func (c *userServiceClient) UserLogin(ctx context.Context, in *UserLoginInput, opts ...grpc.CallOption) (*LoginResponse, error) {
-	out := new(LoginResponse)
+func (c *userServiceClient) UserLogin(ctx context.Context, in *UserLoginInput, opts ...grpc.CallOption) (*UserLoginResponse, error) {
+	out := new(UserLoginResponse)
 	err := c.cc.Invoke(ctx, UserService_UserLogin_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -97,7 +97,7 @@ type UserServiceServer interface {
 	GetUser(context.Context, *UserId) (*User, error)
 	RegisterUser(context.Context, *UserRegisterInput) (*UserId, error)
 	EditUser(context.Context, *User) (*User, error)
-	UserLogin(context.Context, *UserLoginInput) (*LoginResponse, error)
+	UserLogin(context.Context, *UserLoginInput) (*UserLoginResponse, error)
 	TestRpc(context.Context, *Empty) (*TestMessage, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
@@ -115,7 +115,7 @@ func (UnimplementedUserServiceServer) RegisterUser(context.Context, *UserRegiste
 func (UnimplementedUserServiceServer) EditUser(context.Context, *User) (*User, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method EditUser not implemented")
 }
-func (UnimplementedUserServiceServer) UserLogin(context.Context, *UserLoginInput) (*LoginResponse, error) {
+func (UnimplementedUserServiceServer) UserLogin(context.Context, *UserLoginInput) (*UserLoginResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UserLogin not implemented")
 }
 func (UnimplementedUserServiceServer) TestRpc(context.Context, *Empty) (*TestMessage, error) {
