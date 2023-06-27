@@ -1,0 +1,15 @@
+FROM    alpine:3.15.1 AS build
+
+WORKDIR /app
+
+RUN     apk add --no-cache protoc
+
+COPY    ../proto/user.proto .
+
+# build proto descriptor
+RUN     protoc --proto_path=. --go_out=. --go_opt=paths=source_relative \
+        --go-grpc_out=. --go-grpc_opt=paths=source_relative user.proto
+
+FROM    envoyproxy/envoy:v1.22.0
+
+COPY    --from=build /app/greeting.pb /tmp/

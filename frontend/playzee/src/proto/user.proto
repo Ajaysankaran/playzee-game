@@ -1,0 +1,49 @@
+
+syntax = "proto3";
+option go_package = "github.com/playzee/backend/user-service/proto";
+
+
+service userService {
+    rpc GetUser(UserId) returns (User) {}
+    rpc RegisterUser(UserRegisterInput) returns (UserId) {}
+    rpc EditUser(User) returns (User) {}
+    rpc UserLogin(UserLoginInput) returns (UserLoginResponse) {}
+    rpc TestRpc(Empty) returns (TestMessage) {}
+}
+
+message Empty {}
+
+message TestMessage {
+    string text = 1;
+}
+
+message UserId {
+    string id = 1;
+}
+
+message User {
+    string username = 1;
+    string firstname = 2;
+    string lastname = 3;
+    string email = 4;
+    string loginType = 5;
+}
+
+message UserRegisterInput {
+    User user = 1;
+    string password = 2;
+}
+
+message UserLoginInput {
+    string username = 1;
+    string password = 2;
+    string loginType = 3;
+    string emailId = 4;
+}
+
+message UserLoginResponse {
+    User user = 1;
+    string authToken = 2;
+    string refreshToken = 3;
+
+}

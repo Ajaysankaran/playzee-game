@@ -17,7 +17,6 @@ const GameCard = (props: GameCardProps) => {
     }, [])
     
     const goToGame = React.useCallback(() => {
-        console.log("gotogame")
         router.push("/tic-tac-toe")
     }, [])
 
@@ -27,7 +26,6 @@ const GameCard = (props: GameCardProps) => {
     </>
 
     const closeDialog = React.useCallback(() => {
-        console.log("closeDialog")
         setShowDialog(false)
     }, [])
 

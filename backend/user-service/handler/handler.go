@@ -14,6 +14,8 @@ type UserServer struct {
 	pb.UnimplementedUserServiceServer
 }
 
+var usrService service.UserService
+
 func (s *UserServer) TestRpc(ctx context.Context, in *pb.Empty) (*pb.TestMessage, error) {
 	return &pb.TestMessage{Text: "RPC is working fine"}, nil
 }
@@ -36,7 +38,7 @@ func (s *UserServer) RegisterUser(ctx context.Context, in *pb.UserRegisterInput)
 		Password:  in.Password,
 	}
 
-	userOutput, err := service.RegisterUser(*userInput)
+	userOutput, err := usrService.RegisterUser(*userInput)
 
 	if err != nil {
 		return nil, err
@@ -53,7 +55,7 @@ func (s *UserServer) UserLogin(ctx context.Context, in *pb.UserLoginInput) (*pb.
 		Email:     in.EmailId,
 	}
 
-	if user, err := service.Login(loginInput); err != nil {
+	if user, err := usrService.Login(loginInput); err != nil {
 		return nil, err
 	} else {
 		authToken := utils.GenerateJwtToken(utils.Claims{

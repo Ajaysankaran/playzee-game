@@ -22,3 +22,8 @@ type LoginInput struct {
 	Email     string
 	LoginType string
 }
+
+type UserRegisterInput struct {
+	User     UserModel
+	Password string
+}
